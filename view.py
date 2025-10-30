@@ -72,3 +72,74 @@ class WeatherView:
         # ===== Current Weather Frame =====
         self.current_frame = tk.Frame(self.content_frame, bg='#2d2d44', relief='flat')
         self.current_frame.pack(fill='x', pady=(0, 20))
+        # City name label
+        self.city_label = tk.Label(
+            self.current_frame,
+            text="",
+            font=('Arial', 24, 'bold'),
+            bg='#2d2d44',
+            fg='white'
+        )
+        self.city_label.pack(pady=(20, 5))
+        
+        # Weather icon
+        self.icon_label = tk.Label(self.current_frame, bg='#2d2d44')
+        self.icon_label.pack()
+        
+        # Temperature
+        self.temp_label = tk.Label(
+            self.current_frame,
+            text="",
+            font=('Arial', 48, 'bold'),
+            bg='#2d2d44',
+            fg='#5865f2'
+        )
+        self.temp_label.pack()
+        
+        # Description
+        self.desc_label = tk.Label(
+            self.current_frame,
+            text="",
+            font=('Arial', 16),
+            bg='#2d2d44',
+            fg='#a0a0b0'
+        )
+        self.desc_label.pack(pady=(0, 10))
+        
+        # Details frame (humidity, wind, etc.)
+        details_frame = tk.Frame(self.current_frame, bg='#2d2d44')
+        details_frame.pack(pady=(10, 20))
+        
+        self.feels_like_label = self._create_detail_label(details_frame, "Feels like: --°C")
+        self.humidity_label = self._create_detail_label(details_frame, "Humidity: --%")
+        self.wind_label = self._create_detail_label(details_frame, "Wind: -- m/s")
+        self.pressure_label = self._create_detail_label(details_frame, "Pressure: -- hPa")
+        
+        # ===== Forecast Frame =====
+        forecast_label = tk.Label(
+            self.content_frame,
+            text="5-Day Forecast",
+            font=('Arial', 18, 'bold'),
+            bg='#1e1e2e',
+            fg='white'
+        )
+        forecast_label.pack(anchor='w', pady=(0, 10))
+        
+        self.forecast_frame = tk.Frame(self.content_frame, bg='#1e1e2e')
+        self.forecast_frame.pack(fill='x')
+        
+        # Create 5 forecast cards
+        self.forecast_cards = []
+        for i in range(5):
+            card = self._create_forecast_card(self.forecast_frame)
+            card.pack(side='left', padx=5, expand=True, fill='both')
+            self.forecast_cards.append(card)
+        
+        # Loading indicator
+        self.loading_label = tk.Label(
+            self.root,
+            text="Loading...",
+            font=('Arial', 16),
+            bg='#1e1e2e',
+            fg='#5865f2'
+        )
