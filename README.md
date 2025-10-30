@@ -1,11 +1,17 @@
 ✨ Features
 
 🌍 Global Coverage - Search weather for any city worldwide
+
 🌡️ Current Weather - Real-time temperature, humidity, wind speed, and more
+
 📅 5-Day Forecast - Extended weather predictions
+
 🎨 Modern UI - Clean, dark-themed interface with smooth animations
+
 🖼️ Weather Icons - Visual representation of weather conditions
+
 ⚡ Fast & Responsive - Asynchronous API calls prevent UI freezing
+
 🏗️ MVC Architecture - Clean code structure for easy maintenance
 
 
@@ -74,6 +80,7 @@ Manages all GUI components
 Displays weather information
 Handles user interface events
 No business logic
+
 
 Controller (controller.py)
 
