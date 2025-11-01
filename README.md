@@ -88,7 +88,7 @@ This project follows the **MVC (Model-View-Controller)** design pattern:
 3. Verify your email address
 4. Go to "API Keys" section in your dashboard
 5. Copy your API key
-6. Paste it into `config.py`
+
 
 **Note:** Free tier allows 60 API calls per minute, which is more than enough for this application.
 
