@@ -18,6 +18,7 @@ class WeatherView:
         self.root = root
         self.root.title("Weather App")
         self.root.geometry("800x800")
+        self.root.minsize(650, 800)
         self.root.configure(bg='#1e1e2e')
         self.root.resizable(True, True)
         
