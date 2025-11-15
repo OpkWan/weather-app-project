@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # model.py
 """
 Weather App - Model Entry Point
@@ -10,6 +11,16 @@ from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import urllib.request
 import io
+=======
+# view.py
+import tkinter as tk
+from tkinter import ttk, messagebox
+from PIL import Image, ImageTk, ImageDraw, ImageFilter
+import urllib.request
+import io
+import json
+import os
+>>>>>>> c08361b (Debugging a few glitches)
 
 class WeatherView:
     """Manages the GUI components"""
@@ -18,6 +29,7 @@ class WeatherView:
         self.root = root
         self.root.title("Weather App")
         self.root.geometry("800x800")
+<<<<<<< HEAD
         self.root.minsize(650, 800)
         self.root.configure(bg='#1e1e2e')
         self.root.resizable(True, True)
@@ -27,17 +39,163 @@ class WeatherView:
         
         # Create UI components
         self._create_widgets()
+=======
+        self.root.configure(bg='#1e1e2e')
+        self.root.resizable(True, True)
+        
+        # Store weather icons and country flags
+        self.icon_cache = {}
+        self.flag_cache = {}
+        
+        # Search history file
+        self.history_file = "search_history.json"
+        self.search_history = self._load_search_history()
+        
+        # Loading animation
+        self.loading_animation_id = None
+        self.loading_angle = 0
+        
+        # Show splash screen first
+        self._show_splash_screen()
+        
+    def _show_splash_screen(self):
+        """Display splash screen on app start"""
+        self.root.withdraw()
+        self.splash = tk.Toplevel(self.root)
+        self.splash.title("")
+        self.splash.geometry("400x300")
+        self.splash.configure(bg='#1e1e2e')
+        self.splash.overrideredirect(True)
+        self.splash.attributes('-topmost', True)
+        
+        # Center the splash screen
+        self.splash.update_idletasks()
+        x = (self.splash.winfo_screenwidth() // 2) - (400 // 2)
+        y = (self.splash.winfo_screenheight() // 2) - (300 // 2)
+        self.splash.geometry(f"400x300+{x}+{y}")
+        
+        # Splash content
+        title_label = tk.Label(
+            self.splash,
+            text="☀️ Weather App",
+            font=('Arial', 32, 'bold'),
+            bg='#1e1e2e',
+            fg='#5865f2'
+        )
+        title_label.pack(pady=(80, 20))
+        
+        subtitle_label = tk.Label(
+            self.splash,
+            text="Loading...",
+            font=('Arial', 14),
+            bg='#1e1e2e',
+            fg='#a0a0b0'
+        )
+        subtitle_label.pack()
+        
+        # Progress bar
+        progress = ttk.Progressbar(
+            self.splash,
+            mode='indeterminate',
+            length=300
+        )
+        progress.pack(pady=30)
+        progress.start(10)
+        
+        # Close splash and show main window after 2 seconds
+        self.root.after(2000, self._close_splash)
+        
+    def _close_splash(self):
+        """Close splash and build + show the real UI."""
+        self.splash.destroy()
+
+        # build UI only once
+        if not hasattr(self, 'ui_built'):
+            self._create_widgets()
+            self.ui_built = True
+
+        # show main window on top
+        self.root.deiconify()
+        self.root.lift()
+        self.root.attributes('-topmost', True)
+        self.root.after_idle(lambda: self.root.attributes('-topmost', False))
+        self.root.focus_force()
+        
+    def _load_search_history(self):
+        """Load search history from file"""
+        if os.path.exists(self.history_file):
+            try:
+                with open(self.history_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # Handle old format (list of strings) and convert to new format
+                    if data and isinstance(data[0], str):
+                        from datetime import datetime
+                        return [{'city': city, 'timestamp': datetime.now().isoformat(), 
+                                'formatted_time': datetime.now().strftime('%b %d, %Y at %I:%M %p')} 
+                               for city in data]
+                    return data
+            except Exception as e:
+                print(f"Error loading history: {e}")
+                return []
+        return []
+    
+    def _save_search_history(self):
+        """Save search history to file"""
+        try:
+            with open(self.history_file, 'w', encoding='utf-8') as f:
+                json.dump(self.search_history[-10:], f, indent=2)
+        except Exception as e:
+            print(f"Error saving history: {e}")
+    
+    def add_to_history(self, city):
+        """Add city to search history with timestamp"""
+        from datetime import datetime
+        if city:
+            city = city.strip().title()
+            # Check if city already exists and update timestamp
+            for entry in self.search_history:
+                if entry['city'] == city:
+                    entry['timestamp'] = datetime.now().isoformat()
+                    entry['formatted_time'] = datetime.now().strftime('%b %d, %Y at %I:%M %p')
+                    self._save_search_history()
+                    return
+            # Add new entry
+            self.search_history.append({
+                'city': city,
+                'timestamp': datetime.now().isoformat(),
+                'formatted_time': datetime.now().strftime('%b %d, %Y at %I:%M %p')
+            })
+            self._save_search_history()
+            self._update_history_dropdown()
+>>>>>>> c08361b (Debugging a few glitches)
     
     def _create_widgets(self):
         """Create all GUI components"""
         
         # ===== Search Frame =====
+<<<<<<< HEAD
         search_frame = tk.Frame(self.root, bg='#1e1e2e')
         search_frame.pack(pady=20, padx=20, fill='x')
         
         # City input
         self.city_entry = tk.Entry(
             search_frame,
+=======
+        search_frame = tk.Frame(self.root, bg='#1e1e2e', height=80)
+        search_frame.pack(pady=20, fill='x')
+        search_frame.pack_propagate(False)  # Maintain fixed height
+
+        # Center container for search elements
+        search_container = tk.Frame(search_frame, bg='#1e1e2e')
+        search_container.place(relx=0.5, rely=0.5, anchor='center')
+
+        # Input frame with entry and history button
+        input_frame = tk.Frame(search_container, bg='#2d2d44', relief='solid', bd=1)
+        input_frame.pack(side='left')
+        
+        self.city_entry = tk.Entry(
+            input_frame,
+>>>>>>> c08361b (Debugging a few glitches)
             font=('Arial', 14),
             width=30,
             bg='#2d2d44',
@@ -46,25 +204,63 @@ class WeatherView:
             relief='flat',
             bd=0
         )
+<<<<<<< HEAD
         self.city_entry.pack(side='left', padx=(0, 10), ipady=8, ipadx=10)
+=======
+        self.city_entry.pack(side='left', ipady=10, ipadx=10)
+>>>>>>> c08361b (Debugging a few glitches)
         self.city_entry.insert(0, "Enter city name...")
         self.city_entry.bind('<FocusIn>', self._on_entry_click)
         self.city_entry.bind('<FocusOut>', self._on_focus_out)
         
+<<<<<<< HEAD
         # Search button
         self.search_button = tk.Button(
             search_frame,
             text="Search",
             font=('Arial', 12, 'bold'),
+=======
+        # History dropdown button (inside the input frame)
+        self.history_button = tk.Button(
+            input_frame,
+            text="⏱",
+            font=('Arial', 16),
+            bg='#2d2d44',
+            fg='#a0a0b0',
+            relief='flat',
+            bd=0,
+            padx=8,
+            pady=10,
+            cursor='hand2',
+            command=self._show_history_menu
+        )
+        self.history_button.pack(side='left')
+        self._create_tooltip(self.history_button, "Search History")
+        
+        # Search button positioned to the right
+        self.search_button = tk.Button(
+            search_container,
+            text="🔍",
+            font=('Arial', 18),
+>>>>>>> c08361b (Debugging a few glitches)
             bg='#5865f2',
             fg='white',
             relief='flat',
             bd=0,
+<<<<<<< HEAD
             padx=20,
             pady=10,
             cursor='hand2'
         )
         self.search_button.pack(side='left')
+=======
+            padx=18,
+            pady=11,
+            cursor='hand2'
+        )
+        self.search_button.pack(side='left', padx=(8, 0))
+        self._create_tooltip(self.search_button, "Search Weather")
+>>>>>>> c08361b (Debugging a few glitches)
         
         # ===== Main Content Frame =====
         self.content_frame = tk.Frame(self.root, bg='#1e1e2e')
@@ -73,15 +269,34 @@ class WeatherView:
         # ===== Current Weather Frame =====
         self.current_frame = tk.Frame(self.content_frame, bg='#2d2d44', relief='flat')
         self.current_frame.pack(fill='x', pady=(0, 20))
+<<<<<<< HEAD
         # City name label
         self.city_label = tk.Label(
             self.current_frame,
+=======
+        
+        # City name and flag container
+        city_container = tk.Frame(self.current_frame, bg='#2d2d44')
+        city_container.pack(pady=(20, 5))
+        
+        # City name label
+        self.city_label = tk.Label(
+            city_container,
+>>>>>>> c08361b (Debugging a few glitches)
             text="",
             font=('Arial', 24, 'bold'),
             bg='#2d2d44',
             fg='white'
         )
+<<<<<<< HEAD
         self.city_label.pack(pady=(20, 5))
+=======
+        self.city_label.pack(side='left', padx=(0, 10))
+        
+        # Country flag
+        self.flag_label = tk.Label(city_container, bg='#2d2d44', cursor='hand2')
+        self.flag_label.pack(side='left')
+>>>>>>> c08361b (Debugging a few glitches)
         
         # Weather icon
         self.icon_label = tk.Label(self.current_frame, bg='#2d2d44')
@@ -136,6 +351,7 @@ class WeatherView:
             card.pack(side='left', padx=5, expand=True, fill='both')
             self.forecast_cards.append(card)
         
+<<<<<<< HEAD
         # Loading indicator
         self.loading_label = tk.Label(
             self.root,
@@ -144,6 +360,188 @@ class WeatherView:
             bg='#1e1e2e',
             fg='#5865f2'
         )
+=======
+        # Loading spinner canvas
+        self.loading_canvas = tk.Canvas(
+            self.root,
+            width=100,
+            height=100,
+            bg='#1e1e2e',
+            highlightthickness=0
+        )
+    
+    def _create_tooltip(self, widget, text):
+        """Create a tooltip for a widget"""
+        def show_tooltip(event):
+            tooltip = tk.Toplevel()
+            tooltip.wm_overrideredirect(True)
+            tooltip.wm_geometry(f"+{event.x_root+10}+{event.y_root+10}")
+            
+            label = tk.Label(
+                tooltip,
+                text=text,
+                background="#2d2d44",
+                foreground="white",
+                relief='solid',
+                borderwidth=1,
+                font=('Arial', 10),
+                padx=5,
+                pady=2
+            )
+            label.pack()
+            
+            widget.tooltip = tooltip
+            widget.after(2000, tooltip.destroy)
+        
+        def hide_tooltip(event):
+            if hasattr(widget, 'tooltip'):
+                widget.tooltip.destroy()
+        
+        widget.bind('<Enter>', show_tooltip)
+        widget.bind('<Leave>', hide_tooltip)
+    
+    def _show_history_menu(self):
+        """Show search history with timestamps in a custom window"""
+        if not self.search_history:
+            messagebox.showinfo("History", "No search history yet!")
+            return
+        
+        # Create custom window for history
+        history_window = tk.Toplevel(self.root)
+        history_window.title("Search History")
+        history_window.geometry("550x400")
+        history_window.resizable(False, False)
+        history_window.configure(bg='#1e1e2e')
+        
+        # Title
+        title_label = tk.Label(
+            history_window,
+            text="Recent Searches",
+            font=('Arial', 16, 'bold'),
+            bg='#1e1e2e',
+            fg='white'
+        )
+        title_label.pack(pady=10)
+        
+        # Scrollable frame for history
+        canvas = tk.Canvas(history_window, bg='#1e1e2e', highlightthickness=0)
+        scrollbar = ttk.Scrollbar(history_window, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg='#1e1e2e')
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Add history entries (most recent first)
+        for entry in reversed(self.search_history[-10:]):
+            entry_frame = tk.Frame(scrollable_frame, bg='#2d2d44', relief='solid', bd=1)
+            entry_frame.pack(fill='x', padx=10, pady=5)
+            
+            # City name button
+            city_button = tk.Button(
+                entry_frame,
+                text=entry['city'],
+                font=('Arial', 12, 'bold'),
+                bg='#2d2d44',
+                fg='#5865f2',
+                relief='flat',
+                cursor='hand2',
+                anchor='w',
+                command=lambda c=entry['city']: self._select_from_history_window(c, history_window)
+            )
+            city_button.pack(fill='x', padx=10, pady=(5, 0))
+            
+            # Timestamp with clock icon
+            time_label = tk.Label(
+                entry_frame,
+                text=f"🕒 {entry['formatted_time']}",
+                font=('Arial', 9),
+                bg='#2d2d44',
+                fg='#a0a0b0',
+                anchor='w'
+            )
+            time_label.pack(fill='x', padx=10, pady=(0, 5))
+        
+        canvas.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Clear history button
+                    # --- Stylish rounded-red "Clear History" button ---
+        clear_btn_frame = tk.Frame(history_window, bg='#1e1e2e')
+        clear_btn_frame.pack(pady=12)
+
+        clear_styles = {
+            'font': ('Arial', 11, 'bold'),
+            'fg': 'white',
+            'bg': '#e74c3c',          # bright red
+            'activebackground': '#c0392b',  # darker red when pressed
+            'relief': 'flat',
+            'bd': 0,
+            'highlightthickness': 0,
+            'padx': 22,
+            'pady': 7,
+            'cursor': 'hand2'
+        }
+
+        clear_button = tk.Button(
+            clear_btn_frame,
+            text='🗑  Clear History',
+            **clear_styles,
+            command=lambda: self._clear_history(history_window)
+        )
+        clear_button.pack()
+
+        # rounded pill effect (10 px radius)
+        clear_button.config(bg=clear_styles['bg'])
+        clear_btn_frame.config(bg=clear_styles['bg'])
+        clear_button.place(x=0, y=0, relwidth=1, relheight=1)
+        clear_btn_frame.config(height=32, width=160)
+        clear_btn_frame.pack_propagate(False)
+
+        # simple hover lift
+        def on_enter(e):
+            clear_btn_frame.config(bg='#ff6b6b')
+            clear_button.config(bg='#ff6b6b')
+
+        def on_leave(e):
+            clear_btn_frame.config(bg='#e74c3c')
+            clear_button.config(bg='#e74c3c')
+
+        clear_button.bind('<Enter>', on_enter)
+        clear_button.bind('<Leave>', on_leave)
+        
+        clear_button.pack(pady=10)
+
+    def _select_from_history_window(self, city, window):
+        """Select city from history window"""
+        self.city_entry.delete(0, tk.END)
+        self.city_entry.insert(0, city)
+        self.city_entry.config(fg='white')
+        window.destroy()
+    
+    def _clear_history(self, window):
+        """Clear all search history"""
+        if messagebox.askyesno("Clear History", "Are you sure you want to clear all search history?"):
+            self.search_history = []
+            self._save_search_history()
+            window.destroy()
+            messagebox.showinfo("Success", "Search history cleared!")
+
+    def _select_from_history(self, city):
+        """Select city from history"""
+        self.city_entry.delete(0, tk.END)
+        self.city_entry.insert(0, city)
+        self.city_entry.config(fg='white')
+    
+    def _update_history_dropdown(self):
+        """Update history dropdown (called after new search)"""
+        pass
+    
+>>>>>>> c08361b (Debugging a few glitches)
     def _create_detail_label(self, parent, text):
         """Create a styled detail label"""
         label = tk.Label(
@@ -217,6 +615,7 @@ class WeatherView:
             self.city_entry.config(fg='#a0a0b0')
     
     def show_loading(self):
+<<<<<<< HEAD
         """Display loading indicator"""
         self.loading_label.place(relx=0.5, rely=0.5, anchor='center')
         self.root.update()
@@ -224,6 +623,72 @@ class WeatherView:
     def hide_loading(self):
         """Hide loading indicator"""
         self.loading_label.place_forget()
+=======
+        """Display loading spinner animation"""
+        self.loading_canvas.place(relx=0.5, rely=0.5, anchor='center')
+        self._animate_loading()
+    
+    def hide_loading(self):
+        """Hide loading spinner"""
+        if self.loading_animation_id:
+            self.root.after_cancel(self.loading_animation_id)
+            self.loading_animation_id = None
+        self.loading_canvas.place_forget()
+    
+    def _animate_loading(self):
+        """Animate the loading spinner"""
+        self.loading_canvas.delete("spinner")
+        
+        # Draw spinning arc
+        self.loading_angle = (self.loading_angle + 15) % 360
+        self.loading_canvas.create_arc(
+            10, 10, 90, 90,
+            start=self.loading_angle,
+            extent=300,
+            outline='#5865f2',
+            width=8,
+            style='arc',
+            tags="spinner"
+        )
+        
+        # Continue animation
+        self.loading_animation_id = self.root.after(50, self._animate_loading)
+    
+    def update_background(self, weather_condition):
+        """Update background based on weather condition"""
+        # Weather condition color mappings
+        weather_colors = {
+            'clear': '#87CEEB',      # Sky blue
+            'clouds': '#778899',     # Light slate gray
+            'rain': '#4682B4',       # Steel blue
+            'drizzle': '#5F9EA0',    # Cadet blue
+            'thunderstorm': '#2F4F4F',  # Dark slate gray
+            'snow': '#F0F8FF',       # Alice blue
+            'mist': '#D3D3D3',       # Light gray
+            'fog': '#DCDCDC',        # Gainsboro
+            'haze': '#E0E0E0',       # Light gray
+        }
+        
+        condition_lower = weather_condition.lower()
+        bg_color = '#1e1e2e'  # Default
+        
+        for key, color in weather_colors.items():
+            if key in condition_lower:
+                bg_color = color
+                break
+        
+        # Update background with gradient effect
+        self.root.configure(bg=bg_color)
+        self.content_frame.configure(bg=bg_color)
+        
+        # Update labels to match
+        for widget in [self.city_label, self.forecast_frame]:
+            if hasattr(widget, 'configure'):
+                try:
+                    widget.configure(bg=bg_color)
+                except:
+                    pass
+>>>>>>> c08361b (Debugging a few glitches)
     
     def update_current_weather(self, weather_data):
         """Update UI with current weather data"""
@@ -238,6 +703,40 @@ class WeatherView:
         
         # Load weather icon
         self._load_weather_icon(weather_data['icon'], self.icon_label, size=(100, 100))
+<<<<<<< HEAD
+=======
+        
+        # Load country flag
+        self._load_country_flag(weather_data['country'])
+        
+        # Update background based on weather
+        self.update_background(weather_data['description'])
+        
+        # Add to search history
+        self.add_to_history(weather_data['city'])
+    
+    def _load_country_flag(self, country_code):
+        """Load and display country flag"""
+        try:
+            url = f"https://flagcdn.com/w80/{country_code.lower()}.png"
+            with urllib.request.urlopen(url, timeout=5) as u:
+                raw_data = u.read()
+            
+            image = Image.open(io.BytesIO(raw_data))
+            image = image.resize((40, 30), Image.Resampling.LANCZOS)
+            photo = ImageTk.PhotoImage(image)
+            
+            self.flag_cache[country_code] = photo
+            self.flag_label.config(image=photo)
+            self.flag_label.image = photo
+            
+            # Add tooltip
+            self._create_tooltip(self.flag_label, f"Country: {country_code}")
+            
+        except Exception as e:
+            print(f"Error loading flag: {e}")
+            self.flag_label.config(image='', text=country_code)
+>>>>>>> c08361b (Debugging a few glitches)
     
     def update_forecast(self, forecast_data):
         """Update UI with forecast data"""
@@ -267,7 +766,11 @@ class WeatherView:
             
             self.icon_cache[icon_code] = photo
             label_widget.config(image=photo)
+<<<<<<< HEAD
             label_widget.image = photo  # Keep reference
+=======
+            label_widget.image = photo
+>>>>>>> c08361b (Debugging a few glitches)
             
         except Exception as e:
             print(f"Error loading icon: {e}")
@@ -283,5 +786,13 @@ class WeatherView:
     
     def bind_search(self, callback):
         """Bind search button and Enter key to callback"""
+<<<<<<< HEAD
         self.search_button.config(command=callback)
         self.city_entry.bind('<Return>', lambda e: callback())
+=======
+        if hasattr(self, 'search_button'):
+            self.search_button.config(command=callback)
+            self.city_entry.bind('<Return>', lambda e: callback())
+        else:
+            self.root.after(2100, lambda: self.bind_search(callback))
+>>>>>>> c08361b (Debugging a few glitches)
