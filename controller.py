@@ -1,15 +1,4 @@
-# controller.py
-<<<<<<< HEAD
-"""
-Weather App - Controller Entry Point
-MVC Architecture
-"""
-
-# controller.py
-=======
->>>>>>> c08361b (Debugging a few glitches)
 import threading
-
 class WeatherController:
     """Manages application logic and coordinates Model-View interaction"""
     

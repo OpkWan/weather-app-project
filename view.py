@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-# model.py
-"""
-Weather App - Model Entry Point
-MVC Architecture
-"""
-
-# view.py
-import tkinter as tk
-from tkinter import ttk, messagebox
-from PIL import Image, ImageTk
-import urllib.request
-import io
-=======
 # view.py
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -20,7 +6,6 @@ import urllib.request
 import io
 import json
 import os
->>>>>>> c08361b (Debugging a few glitches)
 
 class WeatherView:
     """Manages the GUI components"""
@@ -29,17 +14,6 @@ class WeatherView:
         self.root = root
         self.root.title("Weather App")
         self.root.geometry("800x800")
-<<<<<<< HEAD
-        self.root.minsize(650, 800)
-        self.root.configure(bg='#1e1e2e')
-        self.root.resizable(True, True)
-        
-        # Store weather icons
-        self.icon_cache = {}
-        
-        # Create UI components
-        self._create_widgets()
-=======
         self.root.configure(bg='#1e1e2e')
         self.root.resizable(True, True)
         
@@ -167,20 +141,11 @@ class WeatherView:
             })
             self._save_search_history()
             self._update_history_dropdown()
->>>>>>> c08361b (Debugging a few glitches)
     
     def _create_widgets(self):
         """Create all GUI components"""
         
         # ===== Search Frame =====
-<<<<<<< HEAD
-        search_frame = tk.Frame(self.root, bg='#1e1e2e')
-        search_frame.pack(pady=20, padx=20, fill='x')
-        
-        # City input
-        self.city_entry = tk.Entry(
-            search_frame,
-=======
         search_frame = tk.Frame(self.root, bg='#1e1e2e', height=80)
         search_frame.pack(pady=20, fill='x')
         search_frame.pack_propagate(False)  # Maintain fixed height
@@ -195,7 +160,6 @@ class WeatherView:
         
         self.city_entry = tk.Entry(
             input_frame,
->>>>>>> c08361b (Debugging a few glitches)
             font=('Arial', 14),
             width=30,
             bg='#2d2d44',
@@ -204,22 +168,11 @@ class WeatherView:
             relief='flat',
             bd=0
         )
-<<<<<<< HEAD
-        self.city_entry.pack(side='left', padx=(0, 10), ipady=8, ipadx=10)
-=======
         self.city_entry.pack(side='left', ipady=10, ipadx=10)
->>>>>>> c08361b (Debugging a few glitches)
         self.city_entry.insert(0, "Enter city name...")
         self.city_entry.bind('<FocusIn>', self._on_entry_click)
         self.city_entry.bind('<FocusOut>', self._on_focus_out)
         
-<<<<<<< HEAD
-        # Search button
-        self.search_button = tk.Button(
-            search_frame,
-            text="Search",
-            font=('Arial', 12, 'bold'),
-=======
         # History dropdown button (inside the input frame)
         self.history_button = tk.Button(
             input_frame,
@@ -242,25 +195,16 @@ class WeatherView:
             search_container,
             text="🔍",
             font=('Arial', 18),
->>>>>>> c08361b (Debugging a few glitches)
             bg='#5865f2',
             fg='white',
             relief='flat',
             bd=0,
-<<<<<<< HEAD
-            padx=20,
-            pady=10,
-            cursor='hand2'
-        )
-        self.search_button.pack(side='left')
-=======
             padx=18,
             pady=11,
             cursor='hand2'
         )
         self.search_button.pack(side='left', padx=(8, 0))
         self._create_tooltip(self.search_button, "Search Weather")
->>>>>>> c08361b (Debugging a few glitches)
         
         # ===== Main Content Frame =====
         self.content_frame = tk.Frame(self.root, bg='#1e1e2e')
@@ -269,11 +213,6 @@ class WeatherView:
         # ===== Current Weather Frame =====
         self.current_frame = tk.Frame(self.content_frame, bg='#2d2d44', relief='flat')
         self.current_frame.pack(fill='x', pady=(0, 20))
-<<<<<<< HEAD
-        # City name label
-        self.city_label = tk.Label(
-            self.current_frame,
-=======
         
         # City name and flag container
         city_container = tk.Frame(self.current_frame, bg='#2d2d44')
@@ -282,21 +221,16 @@ class WeatherView:
         # City name label
         self.city_label = tk.Label(
             city_container,
->>>>>>> c08361b (Debugging a few glitches)
             text="",
             font=('Arial', 24, 'bold'),
             bg='#2d2d44',
             fg='white'
         )
-<<<<<<< HEAD
-        self.city_label.pack(pady=(20, 5))
-=======
         self.city_label.pack(side='left', padx=(0, 10))
         
         # Country flag
         self.flag_label = tk.Label(city_container, bg='#2d2d44', cursor='hand2')
         self.flag_label.pack(side='left')
->>>>>>> c08361b (Debugging a few glitches)
         
         # Weather icon
         self.icon_label = tk.Label(self.current_frame, bg='#2d2d44')
@@ -351,16 +285,6 @@ class WeatherView:
             card.pack(side='left', padx=5, expand=True, fill='both')
             self.forecast_cards.append(card)
         
-<<<<<<< HEAD
-        # Loading indicator
-        self.loading_label = tk.Label(
-            self.root,
-            text="Loading...",
-            font=('Arial', 16),
-            bg='#1e1e2e',
-            fg='#5865f2'
-        )
-=======
         # Loading spinner canvas
         self.loading_canvas = tk.Canvas(
             self.root,
@@ -409,8 +333,7 @@ class WeatherView:
         # Create custom window for history
         history_window = tk.Toplevel(self.root)
         history_window.title("Search History")
-        history_window.geometry("550x400")
-        history_window.resizable(False, False)
+        history_window.geometry("450x400")
         history_window.configure(bg='#1e1e2e')
         
         # Title
@@ -470,50 +393,16 @@ class WeatherView:
         scrollbar.pack(side="right", fill="y")
         
         # Clear history button
-                    # --- Stylish rounded-red "Clear History" button ---
-        clear_btn_frame = tk.Frame(history_window, bg='#1e1e2e')
-        clear_btn_frame.pack(pady=12)
-
-        clear_styles = {
-            'font': ('Arial', 11, 'bold'),
-            'fg': 'white',
-            'bg': '#e74c3c',          # bright red
-            'activebackground': '#c0392b',  # darker red when pressed
-            'relief': 'flat',
-            'bd': 0,
-            'highlightthickness': 0,
-            'padx': 22,
-            'pady': 7,
-            'cursor': 'hand2'
-        }
-
         clear_button = tk.Button(
-            clear_btn_frame,
-            text='🗑  Clear History',
-            **clear_styles,
+            history_window,
+            text="Clear History",
+            font=('Arial', 10),
+            bg='#dc3545',
+            fg='white',
+            relief='flat',
+            cursor='hand2',
             command=lambda: self._clear_history(history_window)
         )
-        clear_button.pack()
-
-        # rounded pill effect (10 px radius)
-        clear_button.config(bg=clear_styles['bg'])
-        clear_btn_frame.config(bg=clear_styles['bg'])
-        clear_button.place(x=0, y=0, relwidth=1, relheight=1)
-        clear_btn_frame.config(height=32, width=160)
-        clear_btn_frame.pack_propagate(False)
-
-        # simple hover lift
-        def on_enter(e):
-            clear_btn_frame.config(bg='#ff6b6b')
-            clear_button.config(bg='#ff6b6b')
-
-        def on_leave(e):
-            clear_btn_frame.config(bg='#e74c3c')
-            clear_button.config(bg='#e74c3c')
-
-        clear_button.bind('<Enter>', on_enter)
-        clear_button.bind('<Leave>', on_leave)
-        
         clear_button.pack(pady=10)
 
     def _select_from_history_window(self, city, window):
@@ -541,7 +430,6 @@ class WeatherView:
         """Update history dropdown (called after new search)"""
         pass
     
->>>>>>> c08361b (Debugging a few glitches)
     def _create_detail_label(self, parent, text):
         """Create a styled detail label"""
         label = tk.Label(
@@ -615,15 +503,6 @@ class WeatherView:
             self.city_entry.config(fg='#a0a0b0')
     
     def show_loading(self):
-<<<<<<< HEAD
-        """Display loading indicator"""
-        self.loading_label.place(relx=0.5, rely=0.5, anchor='center')
-        self.root.update()
-    
-    def hide_loading(self):
-        """Hide loading indicator"""
-        self.loading_label.place_forget()
-=======
         """Display loading spinner animation"""
         self.loading_canvas.place(relx=0.5, rely=0.5, anchor='center')
         self._animate_loading()
@@ -688,7 +567,6 @@ class WeatherView:
                     widget.configure(bg=bg_color)
                 except:
                     pass
->>>>>>> c08361b (Debugging a few glitches)
     
     def update_current_weather(self, weather_data):
         """Update UI with current weather data"""
@@ -703,8 +581,6 @@ class WeatherView:
         
         # Load weather icon
         self._load_weather_icon(weather_data['icon'], self.icon_label, size=(100, 100))
-<<<<<<< HEAD
-=======
         
         # Load country flag
         self._load_country_flag(weather_data['country'])
@@ -736,7 +612,6 @@ class WeatherView:
         except Exception as e:
             print(f"Error loading flag: {e}")
             self.flag_label.config(image='', text=country_code)
->>>>>>> c08361b (Debugging a few glitches)
     
     def update_forecast(self, forecast_data):
         """Update UI with forecast data"""
@@ -766,11 +641,7 @@ class WeatherView:
             
             self.icon_cache[icon_code] = photo
             label_widget.config(image=photo)
-<<<<<<< HEAD
-            label_widget.image = photo  # Keep reference
-=======
             label_widget.image = photo
->>>>>>> c08361b (Debugging a few glitches)
             
         except Exception as e:
             print(f"Error loading icon: {e}")
@@ -786,13 +657,8 @@ class WeatherView:
     
     def bind_search(self, callback):
         """Bind search button and Enter key to callback"""
-<<<<<<< HEAD
-        self.search_button.config(command=callback)
-        self.city_entry.bind('<Return>', lambda e: callback())
-=======
         if hasattr(self, 'search_button'):
             self.search_button.config(command=callback)
             self.city_entry.bind('<Return>', lambda e: callback())
         else:
             self.root.after(2100, lambda: self.bind_search(callback))
->>>>>>> c08361b (Debugging a few glitches)
