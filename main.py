@@ -1,8 +1,3 @@
-# main.py
-"""
-Weather App - Main Entry Point
-MVC Architecture
-"""
 
 import tkinter as tk
 from model import WeatherModel

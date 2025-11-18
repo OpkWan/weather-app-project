@@ -1,9 +1,4 @@
 # model.py
-"""
-Weather App - Model Entry Point
-MVC Architecture
-"""
-
 import requests
 from datetime import datetime
 
