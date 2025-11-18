@@ -333,7 +333,8 @@ class WeatherView:
         # Create custom window for history
         history_window = tk.Toplevel(self.root)
         history_window.title("Search History")
-        history_window.geometry("450x400")
+        history_window.geometry("550x400")
+        history_window.resizable(False,False)
         history_window.configure(bg='#1e1e2e')
         
         # Title
