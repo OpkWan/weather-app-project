@@ -649,7 +649,8 @@ class WeatherView:
     
     def show_error(self, message):
         """Display error message"""
-        messagebox.showerror("Error", message)
+        # messagebox.showerror("Error", message)
+        self.city_label.config(text="City Not Found")
     
     def get_city_input(self):
         """Get city name from input field"""
